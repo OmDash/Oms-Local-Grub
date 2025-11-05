@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Om's Local Grub</title>
+    <style>
+        /* General Page Styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #f3f4f6, #dbeafe);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        h1 {
+            margin-top: 40px;
+            color: #1e3a8a;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Form */
+        form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px;
+            gap: 10px;
+        }
+
+        input {
+            padding: 12px 15px;
+            width: 250px;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            outline: none;
+            font-size: 1rem;
+            transition: box-shadow 0.2s ease;
+        }
+
+        input:focus {
+            box-shadow: 0 0 6px rgba(59,130,246,0.4);
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            background-color: #3b82f6;
+            color: white;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #2563eb;
+            transform: scale(1.05);
+        }
+
+        /* Results Section */
+        #results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 15px;
+            width: 90%;
+            max-width: 1000px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 15px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+        }
+
+        .card strong {
+            display: block;
+            font-size: 1.2rem;
+            color: #111827;
+        }
+
+        .card span {
+            display: block;
+            margin-top: 5px;
+            color: #4b5563;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>🍔 Om's Local Grub</h1>
+    <form id="searchForm">
+        <input type="text" id="location" placeholder="Enter a location" required>
+        <button type="submit">Search</button>
+    </form>
+    <div id="results"></div>
+
+    <script>
+        document.getElementById("searchForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const location = document.getElementById("location").value;
+            const res = await fetch("/search", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `location=${location}`
+            });
+            const data = await res.json();
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = "";
+            data.businesses.forEach(biz => {
+                resultsDiv.innerHTML += `
+                    <div class="card">
+                        <strong>${biz.name}</strong>
+                        <span>${biz.rating} ⭐</span>
+                        <span>${biz.location.address1}</span>
+                    </div>`;
+            });
+        });
+    </script>
+</body>
+</html>
